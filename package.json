@@ -1,0 +1,26 @@
+{
+  "name": "pfront",
+  "version": "0.0.1",
+  "description": "pFront is a green JavaScript framework that create a parallel front in webworker before send it to the DOM",
+  "main": "index.js",
+  "scripts": {
+    "serve": "http-server ./www -a localhost -p 8000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/fsb/pfront.git"
+  },
+  "author": "fsb",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://gitlab.com/fsb/pfront/issues"
+  },
+  "homepage": "https://gitlab.com/fsb/pfront#readme",
+  "devDependencies": {
+    "eslint": "^6.4.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "gulp": "^4.0.2",
+    "http-server": "^0.11.1"
+  }
+}
