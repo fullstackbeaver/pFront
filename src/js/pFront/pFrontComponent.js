@@ -56,6 +56,6 @@ class PFrontComponent{
    * @return {void}                send message to the DOM
    */
   updateDOMcomponent(thingsToUpdate){
-    updateDOMcomponent(thingsToUpdate, "#"+this.name)
+    updateDOMcomponent(thingsToUpdate, "#"+this.name);
   }
 }

@@ -32,7 +32,7 @@ class PFront{
       }
     }.bind(this);
 
-    window.addEventListener("load", pFront.init.bind(this));
+    window.addEventListener("load", window.pFront.init.bind(this));
   }
 
   addEventListener(args){
@@ -102,19 +102,19 @@ class PFront{
   getFormValues(args){
     let answer = {};
     let elms   = document.getElementById(args.componentName).querySelectorAll("input");
-    for (let [key, elm] of Object.entries(elms)) {
-      switch (elm.type){
+    for (let elm of Object.entries(elms)) {
+      switch (elm[1].type){
         case "checkbox" :
-          answer[elm.name] = document.getElementById(elm.id).checked;
+          answer[elm[1].name] = document.getElementById(elm[1].id).checked;
           break; 
         default : 
-          answer[elm.name] = elm.value;
+          answer[elm[1].name] = elm[1].value;
           break;
       }
     }
     elms   = document.getElementById(args.componentName).querySelectorAll("select");
-    for (let [key, elm] of Object.entries(elms)) {
-      answer[elm.name] = elm.options[elm.selectedIndex].value;
+    for (let elm of Object.entries(elms)) {
+      answer[elm[1].name] = elm[1].options[elm[1].selectedIndex].value;
     }
     let msg= {
       "recipient" : args.componentName
@@ -128,7 +128,7 @@ class PFront{
   }
   
   init(){
-    window.removeEventListener("load", pFront.init);
+    window.removeEventListener("load", window.pFront.init);
 
 
     /**
@@ -162,7 +162,7 @@ class PFront{
     }
 
     //replace existing element
-    if (this.specs.boot.makePage === undefined) pFront.replaceItems(document.querySelectorAll('[data-pFront]'));
+    if (this.specs.boot.makePage === undefined) window.pFront.replaceItems(document.querySelectorAll("[data-pFront]"));
 
     delete this.replaceItems;
     delete this.specs;
@@ -203,8 +203,8 @@ class PFront{
   }
 
   replaceItems (list){
+    if (list.length === 0) return;
     let nItems = list.length;
-    if (nItems==0) return;
     let tmp;
     for (let i=0; i<nItems; i++){
       tmp        = JSON.parse(list[i].dataset.pFront);

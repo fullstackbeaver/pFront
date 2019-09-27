@@ -1,4 +1,4 @@
-const getFormValues = function(componentName, functionCallBackName){
+self.getFormValues = function(componentName, functionCallBackName){
   postMessage({
     "getFormValues" : {
       "callBack"      : functionCallBackName,
@@ -13,7 +13,7 @@ const getFormValues = function(componentName, functionCallBackName){
  * @param  {String} DOMcontent   an HTML string ton insert in DOM node
  * @return {void}              
  */
-const insertDOM = function(DOMcontainer, DOMcontent){
+self.insertDOM = function(DOMcontainer, DOMcontent){
   postMessage({
     "insertDOM" : {
       "DOMcontainer" : DOMcontainer,
@@ -28,7 +28,7 @@ const insertDOM = function(DOMcontainer, DOMcontent){
  * @param  {String} classToInvoke   an object with mainly functions inside needed for make some DOM actions
  * @return {void}
  */
-const makeLinkedComponentInDOM = function(componentName, classToInvoke){
+self.makeLinkedComponentInDOM = function(componentName, classToInvoke){
   // let classPath      = classToInvoke.firstLower();
   postMessage({
     "makeLinkedComponentInDOM" : {
@@ -46,7 +46,7 @@ const makeLinkedComponentInDOM = function(componentName, classToInvoke){
  * @param  {String}  target                     the id of the component to update
  * @return {void}                               send a post message
  */
-const updateDOMcomponent = function(thingsToUpdate, target){
+self.updateDOMcomponent = function(thingsToUpdate, target){
   postMessage({
     "updateDOMcomponent" : {
       "recipient" : target,
