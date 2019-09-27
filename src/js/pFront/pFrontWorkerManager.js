@@ -1,10 +1,12 @@
-importScripts("pFrontComponent.js");
-importScripts("pFrontPage.js");
-importScripts("pFrontWorkerManagerComponent.js");
-importScripts("pFrontWorkerManagerDOM.js");
-importScripts("pFrontWorkerManagerPage.js");
+self.importScripts(
+  "pFrontComponent.js",
+  "pFrontPage.js",
+  "pFrontWorkerManagerComponent.js",
+  "pFrontWorkerManagerDOM.js",
+  "pFrontWorkerManagerPage.js"
+);
 
-const loaded = {
+self.loaded = {
   components :[],
   pages      :[]
 };
@@ -37,9 +39,6 @@ onmessage = function(event) {
     }
     if (this.components[event.data.recipient] === undefined) {
       console.warn(`${event.data.recipient} recipient doesn't exist`);
-      if(this.components.hasOwnProperty("kkmlklmk")){
-        return;
-      }
       return;
     }
   }
@@ -68,15 +67,15 @@ onmessage = function(event) {
   }
 };
 
-const importLibraries = function(list){
+self.importLibraries = function(list){
   let nList = list.length;
   for( let i=0; i< nList; i++ ){
     console.log("import library",list[i]);
-    importScripts(list[i]);
+    self.importScripts(list[i]);
   }
 };
 
-const set = function(msg, target){
+self.set = function(msg, target){
   if (target === undefined) {
     for (let [key, value] of Object.entries(msg)) {
       this[key] = value;
@@ -85,8 +84,8 @@ const set = function(msg, target){
   else {
     for (let [key, value] of Object.entries(msg)) {
       // initSharedValue(target, key);
-      shared[target][key].value = value;
+      self.shared[target][key].value = value;
     }
-    console.log("shared List",shared);
+    console.log("shared List",self.shared);
   }
 };

@@ -38,14 +38,15 @@ class PFront{
   addEventListener(args){
     document
       .getElementById(args.recipient)
-        .addEventListener(args.event, postMessage({
+      .addEventListener(
+        args.event, 
+        postMessage({
           "eventUpdate" : {
             "recipient" : args.recipient,
             "function"  : args.function
           }
-        }
-      )
-    );    
+        })
+      );    
   }
 
   /**
