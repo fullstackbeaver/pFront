@@ -5,4 +5,5 @@ class PFrontPage{
   constructor(){
     this.keep = [];
   }
+  render(){}
 }

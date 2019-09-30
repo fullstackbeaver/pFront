@@ -21,12 +21,12 @@ self.addSharedState = function(component, key, subscriber){
 
 self.checkSharedState = function(component, newState){
   let nSubscribers;
-  for (let [key, value] of Object.entries(newState)) {
+  for (let value of Object.entries(newState)) {
     if (self.shared[component] === undefined)      continue;
-    if (self.shared[component][key] === undefined) continue;
-    nSubscribers = self.shared[component][key].length;
+    if (self.shared[component][value[0]] === undefined) continue;
+    nSubscribers = self.shared[component][value[0]].length;
     for(let i=0; i< nSubscribers; i++){
-      self.shareState(component, key, self.shared[component][key][i]);
+      self.shareState(component, value[0], self.shared[component][value[0]][i]);
     }
   }
 };
@@ -54,13 +54,12 @@ self.checkSharedState = function(component, newState){
 // }
 
 self.makeComponent = function( componentName, component){
-  // console.log(componentName, components[componentName]);
   if (self.components[componentName] === undefined){
     self.components[componentName]      = component;
     self.components[componentName].name = componentName;
   }
   // console.log("self.components:",self.components);
-  return self.components[componentName].html;
+  return self.components[componentName].render();
 };
 
 self.shareState = function(component, key, subscriber){

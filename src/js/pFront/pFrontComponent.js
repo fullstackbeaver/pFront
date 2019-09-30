@@ -3,22 +3,40 @@
  */
 class PFrontComponent{
 
+  /**
+   * [constructor description]
+   * @todo faire le commentaire
+   * @return {[type]} [description]
+   */
   constructor(){
     this.state = {
       "otherComponents" : {}
     };
-    // if (args.method === undefined) this.method = null;
-    // else                           this.method = args.method;
+    this.beforeDie = [];
   }
 
   /**
-   * return a generated h 
-   * @param  {String} functionToCall a function to call. By default it's "content", but you can call alo "container" or whatever function inside the class that generate html
-   * @return {String}                the generated html made by the called function
+   * [die description]
+   * @todo faire le commentaire
+   * @return {[type]} [description]
    */
-  // html(functionToCall = "content"){
-  //   return this[functionToCall];
-  // }
+  die(){
+    let nTodo = this.beforeDie.length;
+    for (var i = 0; i < nTodo; i++) {
+      eval(this.beforeDie[i]);
+    }
+    postMessage({
+      "removeComponent" : this.name
+    });
+    delete self.components[this.name];
+  }
+
+  /**
+   * [render description]
+   * @todo faire le commentaire
+   * @return {[type]} [description]
+   */
+  render(){}
 
   /**
    * update the component's state and check in workerManager if the values is (are) shared with other components
@@ -28,7 +46,7 @@ class PFrontComponent{
   setState(newState){
     this.state = {...this.state, ...newState};
     this.updateState();
-    checkSharedState(this.name, newState);
+    self.checkSharedState(this.name, newState);
   }
 
   /**
@@ -38,7 +56,7 @@ class PFrontComponent{
    * @return {void}
    */
   subscribe(otherComponent, properties){
-    subscribe(otherComponent, properties, this.name);
+    self.subscribe(otherComponent, properties, this.name);
   }
 
   /**
@@ -56,6 +74,6 @@ class PFrontComponent{
    * @return {void}                send message to the DOM
    */
   updateDOMcomponent(thingsToUpdate){
-    updateDOMcomponent(thingsToUpdate, "#"+this.name);
+    self.updateDOMcomponent(thingsToUpdate, "#"+this.name);
   }
 }

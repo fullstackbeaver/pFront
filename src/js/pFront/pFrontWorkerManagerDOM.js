@@ -50,7 +50,7 @@ self.updateDOMcomponent = function(thingsToUpdate, target){
   postMessage({
     "updateDOMcomponent" : {
       "recipient" : target,
-      "update"    : thingsToUpdate
+      ...thingsToUpdate
     }
   });
 };

@@ -6,11 +6,6 @@ self.importScripts(
   "pFrontWorkerManagerPage.js"
 );
 
-self.loaded = {
-  components :[],
-  pages      :[]
-};
-
 String.prototype.firstUpper = function(str){
   if ( ! str ) str = this;
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -28,7 +23,6 @@ String.prototype.firstLower = function(str){
  * @return {void}
  */
 onmessage = function(event) {
-
   if (event.data.recipient !== undefined ){ //on cible un composant
     if (event.data.recipient === "page"){
       for (let key in event.data) {
@@ -43,7 +37,6 @@ onmessage = function(event) {
     }
   }
 
-  // console.log(event.data)
   for (let key in event.data) {
     // console.log("key",key)
     if (key == "recipient") continue;
@@ -67,14 +60,25 @@ onmessage = function(event) {
   }
 };
 
+/**
+ * [importLibraries description]
+ * @todo faire le commentaire
+ * @param  {[type]} list [description]
+ * @return {[type]}      [description]
+ */
 self.importLibraries = function(list){
   let nList = list.length;
   for( let i=0; i< nList; i++ ){
-    console.log("import library",list[i]);
     self.importScripts(list[i]);
   }
 };
 
+/**
+ * [set description]
+ * @todo faire le commentaire
+ * @param {[type]} msg    [description]
+ * @param {[type]} target [description]
+ */
 self.set = function(msg, target){
   if (target === undefined) {
     for (let [key, value] of Object.entries(msg)) {

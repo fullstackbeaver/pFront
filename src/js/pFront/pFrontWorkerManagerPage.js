@@ -17,15 +17,7 @@ self.page    = {};
  * @return {void}
  */
 self.makePage = function(newPage, options={}){
-  // if (loaded.pages.indexOf(newPage) === -1 ){
-  //  importScripts(`../../pages/${newPage}/${newPage}.js`);
-  //  loaded.pages.push(newPage);
-  // }
-  
-  // removeUselessComponents
-  // console.log(newPage);
-  // console.log(self.components);
-
+  // console.log("makePage");
   let previousComponents = [];
   for (let key of Object.entries(self.components)) {
     previousComponents.push(key[0]);
@@ -36,18 +28,39 @@ self.makePage = function(newPage, options={}){
   todo += ")";
   self.page = eval(todo);
 
+  // console.log("self.page.transition",self.page.transition);
+  if(self.page.transition !== undefined){
+    self.components.transition = self.page.transition;
+    self.components.transition.init(previousComponents);
+  }
+  else self.switchPage(previousComponents);
+
+};
+
+/**
+ * [switchPage description]
+ * @todo faire le commentaire
+ * @param  {[type]} previousComponents [description]
+ * @return {[type]}                    [description]
+ */
+self.switchPage = function(previousComponents){
+  // console.log("switchPage",previousComponents,self.page);
   for (let key of previousComponents) {
-    if (page.keep.indexOf(key) == -1) delete self.components[key];
+    if (self.page.keep.indexOf(key) == -1) delete self.components[key];
   }
   postMessage({
     "updatePage" : {
-      "name"         : newPage,
-      "html"         : page.html,
-      "tagContainer" : page.tagContainer,
-      "title"        : page.title,
+      "name"         : self.page.name,
+      "html"         : self.page.render(),
+      "tagContainer" : self.page.tagContainer,
+      "title"        : self.page.title,
     }
   });
-  history.push(newPage);
+  history.push(self.page.name);
 };
 
+/**
+ * shortcut of makePage
+ * @function
+ */
 self.changePage = self.makePage;

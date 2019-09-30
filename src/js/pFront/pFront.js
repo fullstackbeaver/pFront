@@ -35,34 +35,59 @@ class PFront{
     window.addEventListener("load", window.pFront.init.bind(this));
   }
 
+  /**
+   * add a listenener to a DOM element
+   * @param {JSON}   args some arguments
+   * @param {String} args.event
+   * @param {String} args.function
+   * @param {String} args.recipient  id of the element that should listen something
+   */
   addEventListener(args){
+    // console.log("addEventListener",args);
+    let msg = {
+      "recipient" : args.recipient
+    };
+    msg[args.function] = null;
     document
       .getElementById(args.recipient)
       .addEventListener(
         args.event, 
-        postMessage({
-          "eventUpdate" : {
-            "recipient" : args.recipient,
-            "function"  : args.function
-          }
-        })
-      );    
+        ()=>window.pFront.workerManager.postMessage(msg)
+      );
+  }
+
+  /**
+   * alternative to insertDOM that can handle mutationObserver
+   * @param {JSON}   elm               element to include
+   * @param {String} elm.DOMcontainer  DOM element that will receive the new element
+   * @param {String} elm.tagName       tag of the new element
+   * @param {JSON}   elm.specs         specifications of the element
+   */
+  addNode(elm){
+    var element = document.createElement(elm.tagName);
+    for (let [key, value] of Object.entries(elm.specs)) {
+      element[key] = value;
+    }
+    document.querySelector(elm.DOMcontainer).appendChild(element);
   }
 
   /**
    * function that observe and dispatch inforation about DOM's modifications
-   * 
+   * @todo changer "transition" qui est en dur par un tableau de données
    * @function
    * @param  {array} mutationsList list of MutationRecord
    * @return {void}
    */
   callbackObsverver(mutationsList) {
+    // console.log(mutationsList);
     for(var mutation of mutationsList) {
       if (mutation.type == "childList") {
         if( mutation.addedNodes.length > 0){
           if (mutation.addedNodes[0].id == "transition"){
-            alert("to page transition");
-            // this.page.transitionIn.ready();
+            window.pFront.workerManager.postMessage({
+              "recipient" : "transition",
+              "ready" : null
+            });
           }
         }
       }
@@ -73,7 +98,7 @@ class PFront{
   }
 
   /**
-   * this functions has been made i order to get values from DOM for example document.body.clientWidth
+   * this functions has been made in order to get values from DOM for example document.body.clientWidth
    * @param  {JSON}   args           a JSON containig information
    * @param  {Array}  args.functions an array containig a list of functions to evaluate
    * @params {String} args.recipient the name of the object where to send the answer
@@ -123,10 +148,20 @@ class PFront{
     this.workerManager.postMessage(msg);
   }
 
-  getParent(domElm){
-    return domElm.parentNode;
-  }
-  
+  /**
+   * [getParent description]
+   * @param  {String} element element to find the parent
+   * @return {Node}           the parent's node element 
+   */
+  // getParent(element){
+  //   return document.querySelector(element).parentNode;
+  // }
+ 
+  /**
+   * [init description]
+   * @todo faire le commentaire
+   * @return {[type]} [description]
+   */
   init(){
     window.removeEventListener("load", window.pFront.init);
 
@@ -139,21 +174,11 @@ class PFront{
     this.observer.observe(document.body, { attributes: true, childList: true } );
 
     //import needed libraries
-    // if (this.specs.hasOwnProperty("importLibraries")) {
     if (this.specs.importLibraries !== undefined) {
       this.workerManager.postMessage({
         "importLibraries": this.specs.importLibraries
       });
     }
-    // if (this.specs.hasOwnProperty("importDOMcomponentsLibraries")) {
-    //   let nScript = this.specs.importDOMcomponentsLibraries.length;
-    //   let script  = document.createElement('script');
-    //   script.type = 'text/javascript';
-    //   for (let i = 0; i < nScript; i++) {
-    //     script.src = this.specs.importDOMcomponentsLibraries[i];
-    //     document.getElementsByTagName('head')[0].appendChild(script);
-    //   }
-    // }
 
     //launch boot options
     // if (this.specs.hasOwnProperty("boot")) {
@@ -168,6 +193,12 @@ class PFront{
     delete this.specs;
   }
 
+  /**
+   * [insertDOM description]
+   * @todo faire le commentaire
+   * @param  {[type]} args [description]
+   * @return {[type]}      [description]
+   */
   insertDOM(args){
     document.querySelector(args.DOMcontainer).innerHTML += args.DOMcontent;
   }
@@ -182,6 +213,13 @@ class PFront{
     this.changePage(page); 
   }
 
+  /**
+   * [pAction description]
+   * @todo faire le commentaire
+   * @param  {[type]} component            [description]
+   * @param  {[type]} functionCallBackName [description]
+   * @return {[type]}                      [description]
+   */
   pAction(component, functionCallBackName){
     window.pFront.components[component][functionCallBackName]();
   }
@@ -202,6 +240,12 @@ class PFront{
     window.pFront.workerManager.postMessage(msg);
   }
 
+  /**
+   * [replaceItems description]
+   * @todo faire le commentaire
+   * @param  {[type]} list [description]
+   * @return {[type]}      [description]
+   */
   replaceItems (list){
     if (list.length === 0) return;
     let nItems = list.length;
@@ -214,26 +258,71 @@ class PFront{
       delete list[i].dataset.pFront;
       new this.classesMapping[tmp.component](tmp);
     }
-
-    //PFrontWorkerManager set history -> document.querySelector('[data-pFront-page]').dataset.pFrontPage
   }
 
+  /**
+   * remove a component from DOM
+   * @param  {String} componentId Id of the component to remove
+   * @return {void}
+   */
+  removeComponent(componentId){
+    let target = document.getElementById(componentId);
+    target.parentNode.removeChild(target);
+  }
 
+  /**
+   * [removeEventListener description]
+   * @todo faire le commentaire
+   * @param  {[type]} args [description]
+   * @return {[type]}      [description]
+   */
+  removeEventListener(args){
+    let msg = {
+      "recipient" : args.recipient
+    };
+    msg[args.function] = null;
+    document
+      .getElementById(args.recipient)
+      .removeEventListener(
+        args.event, 
+        ()=>window.pFront.workerManager.postMessage(msg)
+      );
+  }
+
+  /**
+   * [updateDOMcomponent description]
+   * @todo faire le commentaire
+   * @param  {[type]} args [description]
+   * @return {[type]}      [description]
+   */
   updateDOMcomponent(args){
+    // console.log("updateDOMcomponent", args);
     let target = document.querySelector(args.recipient);
-    if ( args.update.container !== undefined ){
-      for (let [key, value] of Object.entries(args.update.container)) {
+    if ( args.container !== undefined ){
+      for (let [key, value] of Object.entries(args.container)) {
         target.setAttribute(key,value);
       }
     }
-    if ( args.update.content !== undefined ) target.innerHTML = args.update.content;
+    if ( args.containerAdd !== undefined ){
+      for (let [key, value] of Object.entries(args.containerAdd)) {
+        target[key] += ` ${value}`;
+      }
+    }
+    if ( args.content !== undefined ) target.innerHTML = args.content;
   }
 
+  /**
+   * [updatePage description]
+   * @todo faire le commentaire
+   * @param  {[type]} args [description]
+   * @return {[type]}      [description]
+   */
   updatePage(args){
     let target;
     if (args.tagContainer !== undefined) target = document.querySelector(args.tagContainer);
-    console.log("updatePage",target, args);
+    // console.log("updatePage",target, args);
     for (let [key, value] of Object.entries(args)) {
+      if (value === undefined) continue;
       switch (key){
         case "name" :
           document.body.className = value;
@@ -248,6 +337,11 @@ class PFront{
     }
   }
 
+  /**
+   * update stylesheet
+   * @param  {JSON} args a json containing elements to update
+   * @return {void}
+   */
   updateStyleProperties(args){
     for (let [key, value] of Object.entries(args)) {
       document.documentElement.style.setProperty(key, value);

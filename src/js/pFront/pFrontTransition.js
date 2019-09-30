@@ -1,35 +1,121 @@
-class PFrontTransition{
+class PFrontTransition extends PFrontComponent {
 
+  /**
+   * [constructor description]
+   * @todo faire le commentaire
+   * @return {[type]} [description]
+   */
   constructor(){
-    this.name = "transition";
+    super();
+    this.name       = "transition";
+    this.pointerEnd = false;
   }
 
   /**
-   * change the component's class for transition's beginning
-   * @function
-   * @return {void}
+   * [end description]
+   * @todo faire le commentaire
+   * @return {[type]} [description]
    */
-  start(){
-    // this.dom.addEventListener('transitionend', this.waiting.bind(this));
-    // this.dom.classList.add(this.startClass);
+  end(){
+    if (this.pointersEnd) return;
+    this.pointersEnd = true;
+
+    //changer de page;
+    self.switchPage(this.previousComponents);
+    
+    //enlever le listener & changer de classe & ajouter un listener
     postMessage({
-      "addEventListener" : {
+      "removeEventListener" : {
         "event"     : "transitionend",
         "function"  : "waiting",
-        "recipient" : this.name
+        "recipient" : "transition"
+      },
+      "addEventListener" : {
+        "event"     : "transitionend",
+        "function"  : "finished",
+        "recipient" : "transition"
       },
       "updateDOMcomponent" : {
-        "recipient" : this.name,
-        "update"    : {
-          "container" : {
-            "class" : this.startClass
-          }
+        "recipient"    : "transition",
+        "containerAdd" : {
+          "className" : this.endClass
         }
       }
     });
   }
 
-  waiting(){
+  /**
+   * [finished description]
+   * @todo faire le commentaire
+   * @return {[type]} [description]
+   */
+  finished(){
+    postMessage({
+      "removeEventListener" : {
+        "event"     : "transitionend",
+        "function"  : "finished",
+        "recipient" : "transition"
+      }
+    });
+    this.die();
+  }
 
+  /**
+   * [init description]
+   * @todo faire le commentaire
+   * @param  {[type]} previousComponents [description]
+   * @return {[type]}                    [description]
+   */
+  init(previousComponents){
+    this.previousComponents = previousComponents;
+    postMessage({
+      "addNode" : {
+        "DOMcontainer" : "body",
+        "tagName"      : "transition",
+        "specs"        : {
+          "id"        : "transition",
+          "className" : "",
+        }
+      }
+    });
+  }
+
+  /**
+   * [ready description]
+   * @todo faire le commentaire
+   * @return {[type]} [description]
+   */
+  ready(){
+    setTimeout(this.start.bind(this),25);
+  }
+
+  /**
+   * [start description]
+   * @todo faire le commentaire
+   * @return {[type]} [description]
+   */
+  start(){
+    postMessage({
+      "addEventListener" : {
+        "event"     : "transitionend",
+        "function"  : "waiting",
+        "recipient" : "transition"
+      },
+      "updateDOMcomponent" : {
+        "recipient"    : "transition",
+        "containerAdd" : {
+          "className" : this.startClass
+        }
+      }
+    });
+  }
+
+  /**
+   * [waiting description]
+   * @todo faire le commentaire
+   * @return {[type]} [description]
+   */
+  waiting(){
+    console.log("waiting");
   }
 }
