@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pFrontWorkerManagerComponent.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pFrontWorkerManagerComponent.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>self.components = {};
+
+/**
+ * lits of the shared values
+ * @type {Object}
+ */
+self.shared = {};
+
+/**
+ * add an entry in shared values list and give the desired value to the subscriber
+ * @param {String} component  the target component's name
+ * @param {String} key        the key that should be observed
+ * @param {String} subscriber the component which want to have the update
+ */
+self.addSharedState = function(component, key, subscriber){
+  if (self.shared[component][key] === undefined ) self.shared[component][key] = [subscriber];
+  else                                            self.shared[component][key].push(subscriber);
+  self.shareState(component, key, subscriber);
+};
+
+
+self.checkSharedState = function(component, newState){
+  let nSubscribers;
+  for (let value of Object.entries(newState)) {
+    if (self.shared[component] === undefined)      continue;
+    if (self.shared[component][value[0]] === undefined) continue;
+    nSubscribers = self.shared[component][value[0]].length;
+    for(let i=0; i&lt; nSubscribers; i++){
+      self.shareState(component, value[0], self.shared[component][value[0]][i]);
+    }
+  }
+};
+
+// getHtml = function(componentName, functionToCall="html"){
+//   return components[componentName][functionToCall]();
+// }
+
+/**
+ * import components's class  
+ * @function
+ * @param  {array}  components   a list of component to download
+ * @return {void} 
+ */
+// importClassComponents = function(components){
+//   let component; 
+//   let nComponents = components.length;
+//   for ( let i=0; i&lt; nComponents; i++ ) {
+//     if (loaded.pages.indexOf(components[i]) === -1 ){
+//       component = components[i].firstLower();
+//       importScripts(`${paths.components}${component}/${component}.js`);
+//       loaded.components.push(components[i]);
+//     }    
+//   }
+// }
+
+self.makeComponent = function( componentName, component){
+  if (self.components[componentName] === undefined){
+    self.components[componentName]      = component;
+    self.components[componentName].name = componentName;
+  }
+  // console.log("self.components:",self.components);
+  return self.components[componentName].render();
+};
+
+self.shareState = function(component, key, subscriber){
+  // if the subscriber doesn't exist anymore it should be removed for subscriber's list
+  if (self.components[subscriber] === undefined) {
+    self.shared[component][key].splice(self.shared[component][key].indexOf(subscriber),1);
+    return;
+  }
+
+  //check if the value exist in component
+  if (self.components[subscriber].state.otherComponents[component] === undefined) self.components[subscriber].state.otherComponents[component] = {};
+
+  // update subriber
+  self.components[subscriber].state.otherComponents[component][key] = self.components[component].state[key];
+  self.components[subscriber].updateState();
+};
+
+/**
+ * allow to a component to follow key from state of another one
+ * @function
+ * @param  {String}         component  component's name thatyou want to have a state value
+ * @param  {String | Array} key        state's key of the component you want to have updates
+ * @param  {String}         subscriber the component that wants to have the updates
+ * @return {void}                      call the function shareState in order to set the data 
+ */
+self.subscribe = function(component, keys, subscriber){
+  if (self.shared[component] === undefined) self.shared[component] = {};
+  if (typeof keys === "string"){
+    console.log("subscribe String");
+    self.addSharedState(component, keys, subscriber);
+    return;
+  }
+  let nKeys = keys.length;
+  for(let i=0; i&lt;nKeys; i++){
+    self.addSharedState(component, keys[i], subscriber);
+  }  
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PFront.html">PFront</a></li><li><a href="PFrontComponent.html">PFrontComponent</a></li><li><a href="PFrontPage.html">PFrontPage</a></li><li><a href="PFrontTransition.html">PFrontTransition</a></li></ul><h3>Global</h3><ul><li><a href="global.html#onmessage">onmessage</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Oct 04 2019 18:47:38 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
