@@ -25,6 +25,9 @@ npm install pfront
 
 ### for installation without build tools
 
+## Documentation
+The documentation is included in repository in docs directory and also available at https://fullstackbeaver.github.io/pFront/
+
 ## Roadmap
 This is the first draft.
 Soon it will include transition between pages.
