@@ -103,7 +103,7 @@ class PFront{
    * @param  {Array}  args.functions an array containig a list of functions to evaluate
    * @params {String} args.recipient the name of the object where to send the answer
    * @params {String} args.callBack  the name of the function where send the answer
-   * @return {void}      send a post message
+   * @return {void}                  send a post message
    */
   DOMfunctions(args){
     let msg = {
@@ -227,15 +227,14 @@ class PFront{
   /**
    * send message to pFrontWorkerManager
    * @function
-   * @param  {String} recipient [description]
-   * @param  {String} action    [description]
-   * @param  {JSON}   args      [description]
+   * @param  {String|null} recipient it defines who to send the message to. If it's null the message is sent to pFrontWorkerManager directly
+   * @param  {String}      action    [description]
+   * @param  {JSON}        args      [description]
    * @return {void}
    */
-  pMsg(recipient, action, args){
-    let msg = {
-      "recipient" : recipient
-    };
+  pMsg(recipient, action, args=null){
+    let msg = {};
+    if ( recipient !== null )  msg.recipient = recipient;    
     msg[action] = args;
     window.pFront.workerManager.postMessage(msg);
   }
