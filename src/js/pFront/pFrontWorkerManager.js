@@ -1,3 +1,4 @@
+//------pFront release remove------
 self.importScripts(
   "pFrontComponent.js",
   "pFrontPage.js",
@@ -5,6 +6,7 @@ self.importScripts(
   "pFrontWorkerManagerDOM.js",
   "pFrontWorkerManagerPage.js"
 );
+//----end pFront release remove----
 
 String.prototype.firstUpper = function(str){
   if ( ! str ) str = this;
@@ -60,17 +62,19 @@ onmessage = function(event) {
   }
 };
 
+//------pFront production remove------
 /**
  * import external Libraries. Only for the dev version, it is removed when compiling
  * @param  {Array} list a list of file to import
  * @return {void}
  */
 self.importLibraries = function(list){
-  let nList = list.length;
+  const nList = list.length;
   for( let i=0; i< nList; i++ ){
     self.importScripts(list[i]);
   }
 };
+//----end pFront production remove----
 
 /**
  * [set description]

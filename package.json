@@ -4,8 +4,9 @@
   "description": "pFront is a green JavaScript framework that create a parallel front in webworker before send it to the DOM",
   "main": "index.js",
   "scripts": {
-    "serve": "http-server ./www -a localhost -p 8000",
-    "makeDocs": "jsdoc ./src/js/pFront/ ./README.md -d ./docs"
+    "serve"    : "http-server ./www -a localhost -p 8000",
+    "makeDocs" : "jsdoc ./src/js/pFront/ ./README.md -d ./docs",
+    "pFront"   : "node ./bin/pFront"
   },
   "repository": {
     "type": "git",
@@ -18,8 +19,10 @@
   },
   "homepage": "https://gitlab.com/fsb/pfront#readme",
   "devDependencies": {
+    "esm": "^3.2.25",
     "gulp": "^4.0.2",
-    "http-server": "^0.11.1"
+    "http-server": "^0.11.1",
+    "inquirer": "^7.0.0"
   },
   "dependencies": {}
 }

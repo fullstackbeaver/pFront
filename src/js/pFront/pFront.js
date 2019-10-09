@@ -173,15 +173,17 @@ class PFront{
     this.observer = new MutationObserver(this.callbackObsverver.bind(this));
     this.observer.observe(document.body, { attributes: true, childList: true } );
 
+    //------pFront production remove------
     //import needed libraries
     if (this.specs.importLibraries !== undefined) {
       this.workerManager.postMessage({
         "importLibraries": this.specs.importLibraries
       });
     }
+    //----end pFront production remove----
+
 
     //launch boot options
-    // if (this.specs.hasOwnProperty("boot")) {
     if (this.specs.boot !== undefined) {
       this.workerManager.postMessage(this.specs.boot);
     }
